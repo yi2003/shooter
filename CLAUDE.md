@@ -46,6 +46,9 @@ assets/
 - **Shooting:** Press Space (`ui_accept`) to fire bullets in the last movement direction
   - `shoot_cooldown`: 0.3s between shots (configurable via `@export`)
   - Bullets spawn as children of Main
+- **Health:** `health`: 10.0, `max_health`: 10.0 (configurable via `@export`)
+  - `invincible_time`: 1.0s invincibility after taking damage
+  - Takes damage from enemy contact via `take_damage()`
 - **Animations:** 8 directional animations (E, N, NE, NW, S, SE, SW, W)
 - **Scale:** 3x3 (matches world scale)
 
@@ -58,6 +61,9 @@ assets/
   - Finds player via `get_node("../Player")` (both are children of Main)
 - **Health:** `health`: 2.0 (configurable via `@export`), takes damage from bullets
   - On death: plays "dead" animation, disables collision, frees after 0.5s
+- **Contact Damage:** Area2D hitbox (CircleShape2D, radius 5) detects player on layer 2
+  - `contact_damage`: 1.0 per tick (configurable via `@export`)
+  - `contact_cooldown`: 1.0s between damage ticks
 - **Collision:** Layer 3, scans layer 1 (bushes only — passes through player)
 - **Animations:** idle (4 frames, autoplay), run (4 frames), dead (1 frame)
 - **Spawn:** EnemySpawner uses Timer + Marker2D nodes
@@ -159,7 +165,7 @@ Edit Marker2D positions in `main.tscn` under EnemySpawner node:
 ## Known Constraints
 - Viewport: 768x816 pixels
 - World extends beyond viewport (scrolling not implemented)
-- Enemies have no attack/damage against the player yet
+- No player death screen or respawn yet
 
 ## Git Workflow
 - Main branch: `main`

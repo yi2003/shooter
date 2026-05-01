@@ -2,9 +2,13 @@ extends CharacterBody2D
 
 @export var speed: float = 200.0
 @export var shoot_cooldown: float = 0.3
+@export var health: float = 10.0
+@export var max_health: float = 10.0
+@export var invincible_time: float = 1.0
 
 var _last_dir: Vector2 = Vector2.DOWN
 var _shoot_ready: bool = true
+var _invincible: bool = false
 
 const BULLET = preload("res://scenes/bullet.tscn")
 
@@ -37,6 +41,19 @@ func _update_animation(dir: Vector2) -> void:
 
 	var direction_name := _get_direction_name(dir)
 	$AnimatedSprite2D.play(direction_name)
+
+func take_damage(amount: float) -> void:
+	if _invincible:
+		return
+	health -= amount
+	print("Player took ", amount, " damage, health: ", health, "/", max_health)
+	if health <= 0:
+		print("Player died")
+		queue_free()
+		return
+	_invincible = true
+	var timer := get_tree().create_timer(invincible_time)
+	timer.timeout.connect(func(): _invincible = false)
 
 func _get_direction_name(dir: Vector2) -> StringName:
 	var angle := dir.angle()
