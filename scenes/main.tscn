@@ -2,9 +2,66 @@
 
 [ext_resource type="PackedScene" uid="uid://chneeuased4d3" path="res://scenes/world.tscn" id="1_0wfyh"]
 [ext_resource type="PackedScene" uid="uid://cveo8kcpwth1d" path="res://scenes/player.tscn" id="2_sugp2"]
+[ext_resource type="PackedScene" path="res://scenes/enemy.tscn" id="3_enemy"]
+[ext_resource type="Script" uid="uid://dhy8ci3b3g4g" path="res://scenes/enemy_spawner.gd" id="4_spawner"]
 
-[node name="Main" type="Node2D" unique_id=1331357824]
+[node name="Main" type="Node2D" unique_id=1085571548]
 
-[node name="World" parent="." unique_id=726801690 instance=ExtResource("1_0wfyh")]
+[node name="World" parent="." unique_id=344659991 instance=ExtResource("1_0wfyh")]
 
-[node name="Player" parent="." unique_id=1508153065 instance=ExtResource("2_sugp2")]
+[node name="Player" parent="." unique_id=504905059 instance=ExtResource("2_sugp2")]
+position = Vector2(408, 192)
+
+[node name="EnemySpawner" type="Node2D" parent="." unique_id=905837695]
+script = ExtResource("4_spawner")
+enemy_scene = ExtResource("3_enemy")
+
+[node name="Timer" type="Timer" parent="EnemySpawner" unique_id=1747491133]
+
+[node name="Top" type="Node2D" parent="EnemySpawner" unique_id=1701662124]
+
+[node name="Top1" type="Marker2D" parent="EnemySpawner/Top" unique_id=1341307495]
+position = Vector2(321, -23)
+
+[node name="Top2" type="Marker2D" parent="EnemySpawner/Top" unique_id=216919064]
+position = Vector2(408, -24)
+
+[node name="Top3" type="Marker2D" parent="EnemySpawner/Top" unique_id=586571802]
+position = Vector2(473, -21)
+
+[node name="Right" type="Node2D" parent="EnemySpawner" unique_id=1608351934]
+
+[node name="Right1" type="Marker2D" parent="EnemySpawner/Right" unique_id=958061266]
+position = Vector2(819, 330)
+
+[node name="Right2" type="Marker2D" parent="EnemySpawner/Right" unique_id=1721782003]
+position = Vector2(817, 397)
+
+[node name="Right3" type="Marker2D" parent="EnemySpawner/Right" unique_id=1325545011]
+position = Vector2(811, 437)
+
+[node name="Bottom" type="Node2D" parent="EnemySpawner" unique_id=249726231]
+
+[node name="Bottom1" type="Marker2D" parent="EnemySpawner/Bottom" unique_id=560721270]
+position = Vector2(292, 797)
+
+[node name="Bottom2" type="Marker2D" parent="EnemySpawner/Bottom" unique_id=675476867]
+position = Vector2(373, 800)
+
+[node name="Bottom3" type="Marker2D" parent="EnemySpawner/Bottom" unique_id=62147994]
+position = Vector2(436, 795)
+
+[node name="Left" type="Node2D" parent="EnemySpawner" unique_id=336070288]
+
+[node name="Left1" type="Marker2D" parent="EnemySpawner/Left" unique_id=877547539]
+position = Vector2(-34, 329)
+
+[node name="Left2" type="Marker2D" parent="EnemySpawner/Left" unique_id=435059183]
+position = Vector2(-32, 375)
+
+[node name="Left3" type="Marker2D" parent="EnemySpawner/Left" unique_id=769555376]
+position = Vector2(-32, 424)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=514991235]
+position = Vector2(387, 431)
+zoom = Vector2(0.75, 0.75)
