@@ -1,0 +1,73 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/hud.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0, 0, 0, 0.6)
+
+[sub_resource type="LabelSettings" id="TitleSettings"]
+font_size = 12
+font_color = Color(0.6, 0.6, 0.6, 1)
+
+[sub_resource type="LabelSettings" id="ValueSettings"]
+font_size = 24
+font_color = Color(1, 1, 1, 1)
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_script")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -60.0
+offset_bottom = 0.0
+offset_left = 0.0
+offset_right = 768.0
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="HBox" type="HBoxContainer" parent="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 8.0
+offset_right = -20.0
+offset_bottom = -8.0
+alignment = 1
+
+[node name="HP" type="VBoxContainer" parent="Panel/HBox"]
+
+[node name="Title" type="Label" parent="Panel/HBox/HP"]
+text = "HP"
+label_settings = SubResource("TitleSettings")
+horizontal_alignment = 1
+
+[node name="Value" type="Label" parent="Panel/HBox/HP"]
+text = "10/10"
+label_settings = SubResource("ValueSettings")
+horizontal_alignment = 1
+
+[node name="Wave" type="VBoxContainer" parent="Panel/HBox"]
+
+[node name="Title" type="Label" parent="Panel/HBox/Wave"]
+text = "WAVE"
+label_settings = SubResource("TitleSettings")
+horizontal_alignment = 1
+
+[node name="Value" type="Label" parent="Panel/HBox/Wave"]
+text = "1"
+label_settings = SubResource("ValueSettings")
+horizontal_alignment = 1
+
+[node name="Enemies" type="VBoxContainer" parent="Panel/HBox"]
+
+[node name="Title" type="Label" parent="Panel/HBox/Enemies"]
+text = "ENEMIES"
+label_settings = SubResource("TitleSettings")
+horizontal_alignment = 1
+
+[node name="Value" type="Label" parent="Panel/HBox/Enemies"]
+text = "0"
+label_settings = SubResource("ValueSettings")
+horizontal_alignment = 1

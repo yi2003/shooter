@@ -18,9 +18,11 @@ scenes/
 ├── player.gd           - Player movement script (8-directional)
 ├── enemy.tscn          - Goblin enemy (CharacterBody2D)
 ├── enemy.gd            - Enemy AI script (chase player with jitter)
-├── enemy_spawner.gd    - Spawns enemies at random Marker2D points
+├── enemy_spawner.gd    - Wave-based enemy spawner
 ├── bullet.tscn         - Bullet projectile (Area2D)
 ├── bullet.gd           - Bullet movement and damage script
+├── hud.tscn            - Bottom HUD (HP, wave, enemies)
+├── hud.gd              - HUD update script
 assets/
 ├── player/             - 8 directional sprites (E, N, NE, NW, S, SE, SW, W)
 ├── enemies/goblin/     - Goblin sprites (idle, run, dead animations)
@@ -66,9 +68,13 @@ assets/
   - `contact_cooldown`: 1.0s between damage ticks
 - **Collision:** Layer 3, scans layer 1 (bushes only — passes through player)
 - **Animations:** idle (4 frames, autoplay), run (4 frames), dead (1 frame)
-- **Spawn:** EnemySpawner uses Timer + Marker2D nodes
+- **Spawn:** Wave-based spawning via EnemySpawner
+  - Wave 1: 3 enemies, +2 per wave (`base_enemies` / `enemies_increase`)
+  - Enemies spawn one at a time every 2s (`spawn_interval`)
+  - Next wave starts 3s after all enemies killed (`wave_delay`)
+  - Each enemy gets a unique spawn point + ±20px random offset
+  - Random modulate tint per enemy for visual distinction
 - **Spawn Points:** 12 markers around map edges (Top/Right/Bottom/Left, 3 each)
-- **Spawn Interval:** 3 seconds (configurable)
 
 ### Bullet System
 - **Node Type:** Area2D
@@ -78,6 +84,12 @@ assets/
 - **Lifetime:** 2.0 seconds, self-destructs on timeout or collision
 - **Collision:** collision_mask = 5 (layers 1 and 3: bushes and enemies)
 - **Interaction:** Calls `take_damage()` on any body with that method, then queue_free
+
+### HUD System
+- **Node Type:** CanvasLayer
+- **Position:** Bottom bar, semi-transparent black panel (60px tall)
+- **Displays:** HP (live from player), WAVE (current wave number), ENEMIES (alive count)
+- **Update:** HP via `_process`, wave/enemies via `stats_changed` signal from spawner
 
 ### World System
 - **TileMap:** Grass (ground) + Bushes (collision)
@@ -160,6 +172,15 @@ Edit Marker2D positions in `main.tscn` under EnemySpawner node:
 ```gdscript
 # In player.gd, modify:
 @export var shoot_cooldown: float = 0.3  # Seconds between shots
+```
+
+### Change Wave Settings
+```gdscript
+# In enemy_spawner.gd, modify:
+@export var base_enemies: int = 3        # Enemies in wave 1
+@export var enemies_increase: int = 2    # Extra enemies per subsequent wave
+@export var spawn_interval: float = 2.0   # Seconds between spawns
+@export var wave_delay: float = 3.0      # Seconds before next wave
 ```
 
 ## Known Constraints

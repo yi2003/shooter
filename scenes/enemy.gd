@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+signal died
+
 @export var speed: float = 80.0
 @export var jitter_angle: float = 0.5
 @export var health: float = 2.0
@@ -15,6 +17,7 @@ var _contact_timer: Timer
 
 func _ready() -> void:
 	player = get_node("../Player")
+	print(name, " spawned at ", global_position, " - player found: ", player != null)
 
 	_jitter_timer = Timer.new()
 	_jitter_timer.timeout.connect(_update_jitter)
@@ -25,11 +28,11 @@ func _ready() -> void:
 	_contact_timer.one_shot = true
 	add_child(_contact_timer)
 
-	var hitbox := Area2D.new()
+	var hitbox: Area2D = Area2D.new()
 	hitbox.collision_layer = 0
 	hitbox.collision_mask = 2
-	var hitbox_shape := CollisionShape2D.new()
-	var circle := CircleShape2D.new()
+	var hitbox_shape: CollisionShape2D = CollisionShape2D.new()
+	var circle: CircleShape2D = CircleShape2D.new()
 	circle.radius = 5.0
 	hitbox_shape.shape = circle
 	hitbox.add_child(hitbox_shape)
@@ -73,6 +76,7 @@ func take_damage(amount: float) -> void:
 
 func _die() -> void:
 	_dead = true
+	died.emit()
 	$CollisionShape2D.set_deferred("disabled", true)
 	$AnimatedSprite2D.play("dead")
 	velocity = Vector2.ZERO
