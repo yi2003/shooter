@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://dqenemy00001"]
 
+[ext_resource type="Script" uid="uid://dlwkcicdexaw5" path="res://scenes/enemy.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dqm7tg0i7ditx" path="res://assets/enemies/goblin/goblin_dead_anim_f0.png" id="dead_0"]
 [ext_resource type="Texture2D" uid="uid://kvn2neysq7ra" path="res://assets/enemies/goblin/goblin_idle_anim_f0.png" id="idle_0"]
 [ext_resource type="Texture2D" uid="uid://bkxtry5gqi3fr" path="res://assets/enemies/goblin/goblin_idle_anim_f1.png" id="idle_1"]
 [ext_resource type="Texture2D" uid="uid://b4khh6a2cfm4a" path="res://assets/enemies/goblin/goblin_idle_anim_f2.png" id="idle_2"]
@@ -8,10 +10,17 @@
 [ext_resource type="Texture2D" uid="uid://bki1d5hgqja7n" path="res://assets/enemies/goblin/goblin_run_anim_f1.png" id="run_1"]
 [ext_resource type="Texture2D" uid="uid://bx8k8i6evjxk" path="res://assets/enemies/goblin/goblin_run_anim_f2.png" id="run_2"]
 [ext_resource type="Texture2D" uid="uid://4m1eo36a0n6q" path="res://assets/enemies/goblin/goblin_run_anim_f3.png" id="run_3"]
-[ext_resource type="Texture2D" uid="uid://dqm7tg0i7ditx" path="res://assets/enemies/goblin/goblin_dead_anim_f0.png" id="dead_0"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_goblin"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("dead_0")
+}],
+"loop": false,
+"name": &"dead",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("idle_0")
@@ -45,25 +54,22 @@ animations = [{
 "loop": true,
 "name": &"run",
 "speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("dead_0")
-}],
-"loop": false,
-"name": &"dead",
-"speed": 5.0
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_enemy"]
+size = Vector2(7.666667, 8.666666)
 
-[node name="Enemy" type="CharacterBody2D"]
+[node name="Enemy" type="CharacterBody2D" unique_id=1746325658]
+collision_layer = 3
+collision_mask = 1
 scale = Vector2(3, 3)
+script = ExtResource("1_script")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1826027397]
 sprite_frames = SubResource("SpriteFrames_goblin")
 animation = &"idle"
-autoplay = &"idle"
+autoplay = "idle"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=713632015]
+position = Vector2(0.5000001, 2.6666667)
 shape = SubResource("RectangleShape2D_enemy")

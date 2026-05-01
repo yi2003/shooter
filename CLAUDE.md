@@ -17,6 +17,7 @@ scenes/
 ├── player.tscn         - Player character (CharacterBody2D)
 ├── player.gd           - Player movement script (8-directional)
 ├── enemy.tscn          - Goblin enemy (CharacterBody2D)
+├── enemy.gd            - Enemy AI script (chase player with jitter)
 ├── enemy_spawner.gd    - Spawns enemies at random Marker2D points
 assets/
 ├── player/             - 8 directional sprites (E, N, NE, NW, S, SE, SW, W)
@@ -44,7 +45,13 @@ assets/
 
 ### Enemy System
 - **Scene:** enemy.tscn (CharacterBody2D)
-- **Animations:** idle (4 frames), run (4 frames), dead (1 frame)
+- **Script:** enemy.gd
+- **AI Behavior:** Enemies chase the player with randomized jitter for organic movement
+  - `speed`: 80 px/s (configurable via `@export`)
+  - `jitter_angle`: ±0.5 rad max deviation from direct path, re-randomized every 0.3–0.8s
+  - Finds player via `get_node("../Player")` (both are children of Main)
+- **Collision:** Layer 3, scans layer 1 (bushes only — passes through player)
+- **Animations:** idle (4 frames, autoplay), run (4 frames), dead (1 frame)
 - **Spawn:** EnemySpawner uses Timer + Marker2D nodes
 - **Spawn Points:** 12 markers around map edges (Top/Right/Bottom/Left, 3 each)
 - **Spawn Interval:** 3 seconds (configurable)
@@ -52,8 +59,17 @@ assets/
 ### World System
 - **TileMap:** Grass (ground) + Bushes (collision)
 - **Scale:** 3x3
-- **Collision:** Bush tiles have physics layer for player/enemy collision
+- **Collision:** Bush tiles have physics_layer_0 with collision_layer = 1
 - **Tile Size:** 16x16 pixels (scaled to 48x48)
+
+### Collision Layers
+| Layer | Belongs To | Scans (Mask) |
+|-------|-----------|--------------|
+| 1 | Bushes (TileMap) | — |
+| 2 | Player | Layer 1 (bushes) |
+| 3 | Enemy | Layer 1 (bushes) |
+
+Enemies and the player pass through each other (different layers, masks don't cross). Both collide with bushes on layer 1.
 
 ### Camera
 - **Position:** (387, 431) - centered on play area
@@ -74,7 +90,7 @@ Edit Marker2D positions in `main.tscn` under EnemySpawner node:
 ### TileMap Collision
 - Bushes TileSet has physics_layer_0 with collision_layer = 1
 - Tile at atlas (6, 0) has collision polygon: `PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)`
-- Player CharacterBody2D collides with collision_layer 1
+- Player collides with layer 1 (mask=1), Enemy collides with layer 1 (mask=1)
 
 ## Build & Run
 1. Open project in Godot 4.6+
@@ -100,6 +116,13 @@ Edit Marker2D positions in `main.tscn` under EnemySpawner node:
 1. Add sprite frames to AnimatedSprite2D in the Inspector
 2. Name the animation (e.g., "attack")
 3. Call `$AnimatedSprite2D.play("attack")` in script
+
+### Change Enemy AI
+```gdscript
+# In enemy.gd, modify:
+@export var speed: float = 80.0        # Movement speed
+@export var jitter_angle: float = 0.5  # Max random angle deviation (radians)
+```
 
 ## Known Constraints
 - Viewport: 768x816 pixels
