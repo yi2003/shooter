@@ -1,12 +1,34 @@
 extends CharacterBody2D
 
 @export var speed: float = 200.0
+@export var shoot_cooldown: float = 0.3
+
+var _last_dir: Vector2 = Vector2.DOWN
+var _shoot_ready: bool = true
+
+const BULLET = preload("res://scenes/bullet.tscn")
 
 func _physics_process(_delta: float) -> void:
 	var input_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	velocity = input_dir * speed
 	move_and_slide()
 	_update_animation(input_dir)
+
+	if input_dir != Vector2.ZERO:
+		_last_dir = input_dir
+
+	if Input.is_action_just_pressed("ui_accept") and _shoot_ready:
+		_shoot()
+
+func _shoot() -> void:
+	_shoot_ready = false
+	var bullet := BULLET.instantiate()
+	bullet.position = global_position
+	bullet.direction = _last_dir.normalized()
+	get_parent().add_child(bullet)
+
+	var timer := get_tree().create_timer(shoot_cooldown)
+	timer.timeout.connect(func(): _shoot_ready = true)
 
 func _update_animation(dir: Vector2) -> void:
 	if dir == Vector2.ZERO:
@@ -18,7 +40,6 @@ func _update_animation(dir: Vector2) -> void:
 
 func _get_direction_name(dir: Vector2) -> StringName:
 	var angle := dir.angle()
-	# Godot angles: right=0, down=PI/2, left=PI/-PI, up=-PI/2
 	if angle < -7 * PI / 8 or angle > 7 * PI / 8:
 		return &"W"
 	if angle > PI / 8 and angle <= 3 * PI / 8:
