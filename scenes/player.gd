@@ -72,6 +72,9 @@ func take_damage(amount: float) -> void:
 		queue_free()
 		return
 	_invincible = true
+	$AnimatedSprite2D.modulate = Color.RED
+	var flash_tween := create_tween()
+	flash_tween.tween_property($AnimatedSprite2D, "modulate", Color.WHITE, 0.15)
 	var timer := get_tree().create_timer(invincible_time)
 	timer.timeout.connect(func(): _invincible = false)
 
