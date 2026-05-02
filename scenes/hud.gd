@@ -3,6 +3,7 @@ extends CanvasLayer
 @onready var _hp_label: Label = $Panel/HBox/HP/Value
 @onready var _wave_label: Label = $Panel/HBox/Wave/Value
 @onready var _enemies_label: Label = $Panel/HBox/Enemies/Value
+@onready var _countdown_label: Label = $CountdownLabel
 
 var _player: CharacterBody2D
 var _spawner: Node
@@ -20,3 +21,8 @@ func _process(_delta: float) -> void:
 func _update_stats() -> void:
 	_wave_label.text = str(_spawner.current_wave)
 	_enemies_label.text = str(_spawner.enemies_alive)
+	if _spawner.countdown > 0:
+		_countdown_label.text = str(_spawner.countdown)
+		_countdown_label.visible = true
+	else:
+		_countdown_label.visible = false

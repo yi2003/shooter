@@ -14,13 +14,16 @@ const EXPLOSION = preload("res://scenes/explosion.tscn")
 @export var coffee_weight: float = 0.3
 @export var gun_weight: float = 0.3
 @export var heart_weight: float = 0.4
+@export var stagger_time: float = 0.3
 
 var player: CharacterBody2D
 var _jitter: float = 0.0
 var _jitter_timer: Timer
 var _dead: bool = false
+var _staggered: bool = false
 var _player_in_range: bool = false
 var _contact_timer: Timer
+var _stagger_timer: Timer
 
 func _ready() -> void:
 	player = get_node("../Player")
@@ -34,6 +37,11 @@ func _ready() -> void:
 	_contact_timer = Timer.new()
 	_contact_timer.one_shot = true
 	add_child(_contact_timer)
+
+	_stagger_timer = Timer.new()
+	_stagger_timer.one_shot = true
+	_stagger_timer.timeout.connect(_on_stagger_end)
+	add_child(_stagger_timer)
 
 	var hitbox: Area2D = Area2D.new()
 	hitbox.collision_layer = 0
@@ -52,7 +60,7 @@ func _update_jitter() -> void:
 	_jitter_timer.start(randf_range(0.3, 0.8))
 
 func _physics_process(_delta: float) -> void:
-	if _dead or not is_instance_valid(player):
+	if _dead or _staggered or not is_instance_valid(player):
 		return
 	var direction := (player.global_position - global_position).normalized().rotated(_jitter)
 	velocity = direction * speed
@@ -67,7 +75,7 @@ func _on_player_touch(body: Node2D, entered: bool) -> void:
 		_deal_contact_damage()
 
 func _deal_contact_damage() -> void:
-	if _dead or not _player_in_range:
+	if _dead or _staggered or not _player_in_range:
 		return
 	if is_instance_valid(player) and player.has_method("take_damage"):
 		player.take_damage(contact_damage)
@@ -80,6 +88,14 @@ func take_damage(amount: float) -> void:
 	health -= amount
 	if health <= 0:
 		_die()
+		return
+	_staggered = true
+	velocity = Vector2.ZERO
+	_contact_timer.stop()
+	_stagger_timer.start(stagger_time)
+
+func _on_stagger_end() -> void:
+	_staggered = false
 
 func _die() -> void:
 	_dead = true

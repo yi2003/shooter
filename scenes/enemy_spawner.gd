@@ -14,6 +14,7 @@ var current_wave: int = 0
 var enemies_to_spawn: int = 0
 var enemies_spawned: int = 0
 var enemies_alive: int = 0
+var countdown: int = 0
 var _wave_ending: bool = false
 
 func _ready() -> void:
@@ -79,5 +80,10 @@ func _on_enemy_died() -> void:
 	stats_changed.emit()
 	if enemies_spawned >= enemies_to_spawn and enemies_alive <= 0 and not _wave_ending:
 		_wave_ending = true
-		await get_tree().create_timer(wave_delay).timeout
+		for i in range(int(wave_delay), 0, -1):
+			countdown = i
+			stats_changed.emit()
+			await get_tree().create_timer(1.0).timeout
+		countdown = 0
+		stats_changed.emit()
 		_start_next_wave()
