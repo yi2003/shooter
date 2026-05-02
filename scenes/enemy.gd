@@ -3,6 +3,7 @@ extends CharacterBody2D
 signal died
 
 const ITEM_SCENE = preload("res://scenes/item.tscn")
+const EXPLOSION = preload("res://scenes/explosion.tscn")
 
 @export var speed: float = 80.0
 @export var jitter_angle: float = 0.5
@@ -83,12 +84,18 @@ func take_damage(amount: float) -> void:
 func _die() -> void:
 	_dead = true
 	died.emit()
+	_spawn_explosion()
 	_try_drop_item()
 	$CollisionShape2D.set_deferred("disabled", true)
 	$AnimatedSprite2D.play("dead")
 	velocity = Vector2.ZERO
 	await get_tree().create_timer(0.5).timeout
 	queue_free()
+
+func _spawn_explosion() -> void:
+	var explosion: Node = EXPLOSION.instantiate()
+	explosion.global_position = global_position
+	get_parent().add_child(explosion)
 
 func _try_drop_item() -> void:
 	if randf() > drop_chance:
