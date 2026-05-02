@@ -9,8 +9,25 @@ extends CharacterBody2D
 var _last_dir: Vector2 = Vector2.DOWN
 var _shoot_ready: bool = true
 var _invincible: bool = false
+var _base_speed: float
+var _base_shoot_cooldown: float
+var _speed_buff_active: bool = false
+var _gun_buff_active: bool = false
+var _speed_buff_timer: Timer
+var _gun_buff_timer: Timer
 
 const BULLET = preload("res://scenes/bullet.tscn")
+
+func _ready() -> void:
+	_speed_buff_timer = Timer.new()
+	_speed_buff_timer.one_shot = true
+	_speed_buff_timer.timeout.connect(_on_speed_buff_expired)
+	add_child(_speed_buff_timer)
+
+	_gun_buff_timer = Timer.new()
+	_gun_buff_timer.one_shot = true
+	_gun_buff_timer.timeout.connect(_on_gun_buff_expired)
+	add_child(_gun_buff_timer)
 
 func _physics_process(_delta: float) -> void:
 	var input_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -54,6 +71,31 @@ func take_damage(amount: float) -> void:
 	_invincible = true
 	var timer := get_tree().create_timer(invincible_time)
 	timer.timeout.connect(func(): _invincible = false)
+
+func apply_item_effect(item_type: int) -> void:
+	match item_type:
+		0:  # COFFEE
+			if not _speed_buff_active:
+				_base_speed = speed
+				speed *= 1.5
+				_speed_buff_active = true
+			_speed_buff_timer.start(5.0)
+		1:  # GUN
+			if not _gun_buff_active:
+				_base_shoot_cooldown = shoot_cooldown
+				shoot_cooldown = 0.1
+				_gun_buff_active = true
+			_gun_buff_timer.start(5.0)
+		2:  # HEART
+			health = min(health + 3.0, max_health)
+
+func _on_speed_buff_expired() -> void:
+	speed = _base_speed
+	_speed_buff_active = false
+
+func _on_gun_buff_expired() -> void:
+	shoot_cooldown = _base_shoot_cooldown
+	_gun_buff_active = false
 
 func _get_direction_name(dir: Vector2) -> StringName:
 	var angle := dir.angle()

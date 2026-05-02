@@ -2,11 +2,17 @@ extends CharacterBody2D
 
 signal died
 
+const ITEM_SCENE = preload("res://scenes/item.tscn")
+
 @export var speed: float = 80.0
 @export var jitter_angle: float = 0.5
 @export var health: float = 2.0
 @export var contact_damage: float = 1.0
 @export var contact_cooldown: float = 1.0
+@export var drop_chance: float = 0.3
+@export var coffee_weight: float = 0.3
+@export var gun_weight: float = 0.3
+@export var heart_weight: float = 0.4
 
 var player: CharacterBody2D
 var _jitter: float = 0.0
@@ -77,8 +83,26 @@ func take_damage(amount: float) -> void:
 func _die() -> void:
 	_dead = true
 	died.emit()
+	_try_drop_item()
 	$CollisionShape2D.set_deferred("disabled", true)
 	$AnimatedSprite2D.play("dead")
 	velocity = Vector2.ZERO
 	await get_tree().create_timer(0.5).timeout
 	queue_free()
+
+func _try_drop_item() -> void:
+	if randf() > drop_chance:
+		return
+	var total_weight: float = coffee_weight + gun_weight + heart_weight
+	var roll: float = randf() * total_weight
+	var item_type: int
+	if roll < coffee_weight:
+		item_type = 0  # ItemType.COFFEE
+	elif roll < coffee_weight + gun_weight:
+		item_type = 1  # ItemType.GUN
+	else:
+		item_type = 2  # ItemType.HEART
+	var item: Node = ITEM_SCENE.instantiate()
+	item.item_type = item_type
+	item.global_position = global_position
+	get_parent().add_child(item)

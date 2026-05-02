@@ -23,6 +23,8 @@ scenes/
 ├── bullet.gd           - Bullet movement and damage script
 ├── hud.tscn            - Bottom HUD (HP, wave, enemies)
 ├── hud.gd              - HUD update script
+├── item.tscn           - Item pickup (Area2D)
+├── item.gd             - Item pickup script (COFFEE, GUN, HEART)
 assets/
 ├── player/             - 8 directional sprites (E, N, NE, NW, S, SE, SW, W)
 ├── enemies/goblin/     - Goblin sprites (idle, run, dead animations)
@@ -51,6 +53,10 @@ assets/
 - **Health:** `health`: 10.0, `max_health`: 10.0 (configurable via `@export`)
   - `invincible_time`: 1.0s invincibility after taking damage
   - Takes damage from enemy contact via `take_damage()`
+- **Item Pickups:** `apply_item_effect()` handles collected items
+  - COFFEE: 1.5x speed boost for 5s (refreshes on re-pickup)
+  - GUN: fire rate boost (0.1s cooldown) for 5s (refreshes on re-pickup)
+  - HEART: +3 HP (capped at `max_health`)
 - **Animations:** 8 directional animations (E, N, NE, NW, S, SE, SW, W)
 - **Scale:** 3x3 (matches world scale)
 
@@ -75,6 +81,17 @@ assets/
   - Each enemy gets a unique spawn point + ±20px random offset
   - Random modulate tint per enemy for visual distinction
 - **Spawn Points:** 12 markers around map edges (Top/Right/Bottom/Left, 3 each)
+- **Item Drops:** 30% chance to drop an item on death (`drop_chance`)
+  - Weighted random: coffee 30%, gun 30%, heart 40% (configurable via `@export`)
+  - Items spawn at the enemy's death position
+
+### Item System
+- **Node Type:** Area2D
+- **Scene:** item.tscn (Sprite2D + CollisionShape2D)
+- **Script:** item.gd with `ItemType` enum (COFFEE, GUN, HEART)
+- **Visual:** Sprite2D texture set from `assets/items/` based on `item_type`
+- **Collision:** collision_layer=0, collision_mask=2 (detects player on layer 2)
+- **Interaction:** On `body_entered`, calls `apply_item_effect()` on player, then queue_free
 
 ### Bullet System
 - **Node Type:** Area2D
@@ -144,7 +161,16 @@ Edit Marker2D positions in `main.tscn` under EnemySpawner node:
 ### Change Spawn Rate
 ```gdscript
 # In enemy_spawner.gd, modify:
-@export var spawn_interval: float = 3.0  # Seconds between spawns
+@export var spawn_interval: float = 2.0  # Seconds between spawns
+```
+
+### Change Drop Rates
+```gdscript
+# In enemy.gd, modify:
+@export var drop_chance: float = 0.3     # 0.0-1.0, chance any item drops
+@export var coffee_weight: float = 0.3   # Relative weight for coffee
+@export var gun_weight: float = 0.3      # Relative weight for gun
+@export var heart_weight: float = 0.4    # Relative weight for heart
 ```
 
 ### Add New Animation
