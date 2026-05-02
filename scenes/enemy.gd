@@ -52,7 +52,7 @@ func _update_jitter() -> void:
 	_jitter_timer.start(randf_range(0.3, 0.8))
 
 func _physics_process(_delta: float) -> void:
-	if _dead or player == null:
+	if _dead or not is_instance_valid(player):
 		return
 	var direction := (player.global_position - global_position).normalized().rotated(_jitter)
 	velocity = direction * speed
@@ -69,7 +69,7 @@ func _on_player_touch(body: Node2D, entered: bool) -> void:
 func _deal_contact_damage() -> void:
 	if _dead or not _player_in_range:
 		return
-	if player.has_method("take_damage"):
+	if is_instance_valid(player) and player.has_method("take_damage"):
 		player.take_damage(contact_damage)
 	_contact_timer.start(contact_cooldown)
 	_contact_timer.timeout.connect(_deal_contact_damage, CONNECT_ONE_SHOT)

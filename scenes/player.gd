@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+signal died
+
 @export var speed: float = 200.0
 @export var shoot_cooldown: float = 0.3
 @export var health: float = 10.0
@@ -66,6 +68,7 @@ func take_damage(amount: float) -> void:
 	print("Player took ", amount, " damage, health: ", health, "/", max_health)
 	if health <= 0:
 		print("Player died")
+		died.emit()
 		queue_free()
 		return
 	_invincible = true

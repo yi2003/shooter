@@ -25,6 +25,10 @@ scenes/
 ├── hud.gd              - HUD update script
 ├── item.tscn           - Item pickup (Area2D)
 ├── item.gd             - Item pickup script (COFFEE, GUN, HEART)
+├── explosion.tscn      - Enemy death explosion effect
+├── explosion.gd        - Expanding ring explosion animation
+├── game_over.tscn      - Game over screen (CanvasLayer)
+├── game_over.gd        - Game over script with restart
 assets/
 ├── player/             - 8 directional sprites (E, N, NE, NW, S, SE, SW, W)
 ├── enemies/goblin/     - Goblin sprites (idle, run, dead animations)
@@ -107,6 +111,13 @@ assets/
 - **Position:** Bottom bar, semi-transparent black panel (60px tall)
 - **Displays:** HP (live from player), WAVE (current wave number), ENEMIES (alive count)
 - **Update:** HP via `_process`, wave/enemies via `stats_changed` signal from spawner
+
+### Game Over System
+- **Node Type:** CanvasLayer (renders on top of HUD)
+- **Trigger:** Connects to player's `died` signal in `_ready()`
+- **Display:** Full-screen purple panel (85% opacity) with "GAME OVER" title, waves survived count, and "Play Again" button
+- **Restart:** Button calls `get_tree().reload_current_scene()`
+- **Cleanup:** Calls `stop_spawning()` on the spawner to halt enemy waves
 
 ### World System
 - **TileMap:** Grass (ground) + Bushes (collision)
@@ -212,7 +223,7 @@ Edit Marker2D positions in `main.tscn` under EnemySpawner node:
 ## Known Constraints
 - Viewport: 768x816 pixels
 - World extends beyond viewport (scrolling not implemented)
-- No player death screen or respawn yet
+- No respawn or level progression beyond scene reload
 
 ## Git Workflow
 - Main branch: `main`

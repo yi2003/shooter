@@ -14,7 +14,7 @@ func _ready() -> void:
 	_update_stats()
 
 func _process(_delta: float) -> void:
-	if _player:
+	if is_instance_valid(_player):
 		_hp_label.text = "%d/%d" % [_player.health, _player.max_health]
 
 func _update_stats() -> void:

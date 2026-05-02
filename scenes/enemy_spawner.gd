@@ -69,6 +69,10 @@ func _spawn_enemy() -> void:
 	print("  Spawned enemy ", enemies_spawned, "/", enemies_to_spawn, " at ", enemy.position, " (alive: ", enemies_alive, ")")
 	stats_changed.emit()
 
+func stop_spawning() -> void:
+	$Timer.stop()
+	_wave_ending = true
+
 func _on_enemy_died() -> void:
 	enemies_alive -= 1
 	print("  Enemy died (alive: ", enemies_alive, ", spawned: ", enemies_spawned, "/", enemies_to_spawn, ")")

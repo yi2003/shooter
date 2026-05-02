@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dqenemy00001" path="res://scenes/enemy.tscn" id="3_enemy"]
 [ext_resource type="Script" uid="uid://dhy8ci3b3g4g" path="res://scenes/enemy_spawner.gd" id="4_spawner"]
 [ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="5_hud"]
+[ext_resource type="PackedScene" path="res://scenes/game_over.tscn" id="6_gameover"]
 
 [node name="Main" type="Node2D" unique_id=1085571548]
 
@@ -73,3 +74,5 @@ position = Vector2(387, 431)
 zoom = Vector2(0.75, 0.75)
 
 [node name="HUD" parent="." unique_id=2058236229 instance=ExtResource("5_hud")]
+
+[node name="GameOver" parent="." instance=ExtResource("6_gameover")]
